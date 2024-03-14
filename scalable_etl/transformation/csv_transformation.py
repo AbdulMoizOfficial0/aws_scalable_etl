@@ -1,5 +1,4 @@
 from kafka import KafkaProducer, KafkaConsumer
-import json
 import configparser
 import os
 
@@ -24,7 +23,7 @@ class CSVTransformer:
         new_rows = [','.join(new_header)]
         for row in rows[1:]:
             cols = row.split(',')
-            new_cols = [col for idx, col in enumerate(cols) if idx != 5]  # Exclude the 6th column
+            new_cols = [col for idx, col in enumerate(cols) if idx != 5]
             new_row = ','.join(new_cols)
             new_rows.append(new_row)
 
