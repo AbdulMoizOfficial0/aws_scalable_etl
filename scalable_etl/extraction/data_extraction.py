@@ -3,6 +3,10 @@ from abc import ABC, abstractmethod
 from kafka import KafkaProducer
 import requests
 import json
+import configparser
+
+config = configparser.ConfigParser()
+config.read('config.ini')
 
 
 class Extractor(ABC):
@@ -23,6 +27,7 @@ class CSVDataSource(Extractor):
                 data.append(row)
         return data
 
+
 class APIDataSource(Extractor):
     def __init__(self, url):
         self.url = url
@@ -36,19 +41,22 @@ class APIDataSource(Extractor):
             return []
 
 
-
 if __name__ == "__main__":
-    file_path = '../data/BTC-USD.csv'
+    file_path = config['DEFAULT']['file_path']
     csv_data_source = CSVDataSource(file_path)
     data = csv_data_source.extract()
 
+    kafka_bootstrap_servers = config['DEFAULT']['kafka_bootstrap_servers']
+    kafka_producer = KafkaProducer(bootstrap_servers=kafka_bootstrap_servers)
 
-    kafka_producer = KafkaProducer(bootstrap_servers='localhost:9092')
-    api_data_source = APIDataSource('https://query1.finance.yahoo.com/v7/finance/download/BTC-USD?period1=1678793548&period2=1710415948&interval=1d&events=history&includeAdjustedClose=true')
+    api_url = config['DEFAULT']['api_url']
+    api_data_source = APIDataSource(api_url)
+
     api_data = api_data_source.extract()
 
     for item in api_data:
-        kafka_producer.send('api_data', json.dumps(item).encode('utf-8'))
+        topic = config['DEFAULT']['api_topic']
+        kafka_producer.send(topic, json.dumps(item).encode('utf-8'))
         kafka_producer.flush()
         kafka_producer.close()
     print("Data Sent to Topic")
