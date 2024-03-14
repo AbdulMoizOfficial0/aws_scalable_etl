@@ -3,9 +3,9 @@ import json
 from kafka import KafkaProducer, KafkaConsumer
 import configparser
 
-
 config = configparser.ConfigParser()
 config.read(os.path.join(os.path.dirname(__file__), '..', 'config.ini'))
+
 
 class APITransformation:
     def __init__(self):
@@ -28,7 +28,6 @@ class APITransformation:
         }
         return transformed_data
 
-
     def process_data(self):
         for message in self.consumer:
             data = json.loads(message.value.decode('utf-8'))
@@ -36,6 +35,7 @@ class APITransformation:
             output_topic = config["DEFAULT"]["api_output_topic"]
             self.producer.send(output_topic, value=json.dumps(transformed_data).encode('utf-8'))
             self.producer.flush()
+
 
 if __name__ == "__main__":
     api_transformer = APITransformation()
