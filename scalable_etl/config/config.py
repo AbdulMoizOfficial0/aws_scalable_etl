@@ -5,3 +5,7 @@ class ETLConfig:
     MYSQL_PASSWORD = 'root'
     MYSQL_DB = 'stocks'
     JSON_DATA_PATH = '../json_data/'
+    MSSQL_SERVER = 'mssql_server'
+    MSSQL_DATABASE = 'mssql_database'
+    MSSQL_USERNAME = 'mssql_username'
+    MSSQL_PASSWORD = 'mssql_password'
