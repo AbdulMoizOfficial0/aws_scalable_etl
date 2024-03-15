@@ -1,1 +1,0 @@
-USE stocks_data;
