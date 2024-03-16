@@ -1,12 +1,13 @@
 import mysql.connector
+from config.config import ETLConfig
 
 
 class MySQLExtractor:
-    def __init__(self, host, user, password, database):
-        self.host = host
-        self.user = user
-        self.password = password
-        self.database = database
+    def __init__(self):
+        self.host = ETLConfig.MYSQL_HOST
+        self.user = ETLConfig.MYSQL_USER
+        self.password = ETLConfig.MYSQL_PASSWORD
+        self.database = ETLConfig.MYSQL_INPUT_DB
 
     def extract_data(self):
         data = []
