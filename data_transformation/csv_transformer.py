@@ -6,3 +6,4 @@ class CSVTransformer:
             df['new_column'] = df['existing_column'] * 2  # Example transformation
             transformed_data.append(df)
         return transformed_data
+
