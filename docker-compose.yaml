@@ -24,7 +24,6 @@ x-airflow-common:
     - ${AIRFLOW_PROJ_DIR:-.}/data_extraction:/opt/airflow/data_extraction
     - ${AIRFLOW_PROJ_DIR:-.}/data_transformation:/opt/airflow/data_transformation
     - ${AIRFLOW_PROJ_DIR:-.}/data_loading:/opt/airflow/data_loading
-    - ${AIRFLOW_PROJ_DIR:-.}/etl_configs:/opt/airflow/etl_configs
     - ${AIRFLOW_PROJ_DIR:-.}/csv_data:/opt/airflow/csv_data
   user: "${AIRFLOW_UID:-50000}:0"
   depends_on:

@@ -4,40 +4,46 @@ import sys
 from airflow.operators.python import PythonOperator
 from datetime import datetime
 import yaml
-from data_extraction.csv_extractor import CSVExtractor
-from data_extraction.mssql_extractor import MSSQLExtractor
-from data_transformation.csv_transformer import CSVTransformer
-from data_transformation.mssql_transformer import MSSQLTransformer
-from data_loading.s3_loader import S3Loader
 
+sys.path.append('/opt/airflow/data_extraction/')
+sys.path.append('/opt/airflow/data_loading/')
+sys.path.append('/opt/airflow/data_transformation/')
+sys.path.append('/opt/airflow/config/')
 
-sys.path.append('/opt/airflow/data_extraction')
-sys.path.append('/opt/airflow/data_loading')
-sys.path.append('/opt/airflow/data_transformation')
+from csv_extractor import CSVExtractor
+from mssql_extractor import MSSQLExtractor
+from csv_transformer import CSVTransformer
+from mssql_transformer import MSSQLTransformer
+from data_loading import S3Loader
 
 
 # Load configurations
-with open('etl_configs.yaml') as config_file:
+with open('/opt/airflow/config/config.yaml') as config_file:
     config = yaml.safe_load(config_file)
+
 
 def extract_csv_data():
     csv_extractor = CSVExtractor(config_file['csv_directory'])
     return csv_extractor.extract()
+
 
 def extract_mssql_data():
     mssql_extractor = MSSQLExtractor(config_file['mssql_connection_string'])
     query = "SELECT * FROM ETC-USD"  # Define your query
     return mssql_extractor.extract(query)
 
+
 def transform_csv_data(**context):
     csv_transformer = CSVTransformer()
     extracted_data = context['ti'].xcom_pull(task_ids='extract_csv_data')
     return csv_transformer.transform(extracted_data)
 
+
 def transform_mssql_data(**context):
     mssql_transformer = MSSQLTransformer()
     extracted_data = context['ti'].xcom_pull(task_ids='extract_mssql_data')
     return mssql_transformer.transform(extracted_data)
+
 
 def load_data_to_s3(**context):
     csv_data = context['ti'].xcom_pull(task_ids='transform_csv_data')
@@ -51,6 +57,7 @@ def load_data_to_s3(**context):
         bucket_name=config['aws']['bucket_name']
     )
     s3_loader.load(combined_data, 'combined_data.csv')
+
 
 default_args = {
     'owner': 'airflow',
