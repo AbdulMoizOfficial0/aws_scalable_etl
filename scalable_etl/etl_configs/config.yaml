@@ -1,6 +1,0 @@
-mssql_connection_string: "Driver={ODBC Driver 17 for SQL Server};Server=DESKTOP-8BL3MIG\SQLEXPRESS;Database=EmployeesDb;UID=root;PWD=root;"
-aws:
-  access_key: "your_access_key"
-  secret_key: "your_secret_key"
-  bucket_name: "your_bucket_name"
-csv_directory: "/path/to/csv/files"

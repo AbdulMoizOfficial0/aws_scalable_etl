@@ -1,7 +1,6 @@
 x-airflow-common:
   &airflow-common
   image: ${AIRFLOW_IMAGE_NAME:-apache/airflow:2.9.0}
-  # build: .
   environment:
     &airflow-common-env
     AIRFLOW__CORE__EXECUTOR: CeleryExecutor
@@ -13,17 +12,20 @@ x-airflow-common:
     AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
     AIRFLOW__API__AUTH_BACKENDS: 'airflow.api.auth.backend.basic_auth,airflow.api.auth.backend.session'
     AIRFLOW__SCHEDULER__ENABLE_HEALTH_CHECK: 'true'
-    _PIP_ADDITIONAL_REQUIREMENTS: ${_PIP_ADDITIONAL_REQUIREMENTS:-}
+    AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+    AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+    AWS_DEFAULT_REGION: ${AWS_DEFAULT_REGION}
+    _PIP_ADDITIONAL_REQUIREMENTS: "pandas pyodbc boto3"
   volumes:
     - ${AIRFLOW_PROJ_DIR:-.}/dags:/opt/airflow/dags
     - ${AIRFLOW_PROJ_DIR:-.}/logs:/opt/airflow/logs
-    - ${AIRFLOW_PROJ_DIR:-.}/etl_configs:/opt/airflow/config
+    - ${AIRFLOW_PROJ_DIR:-.}/config:/opt/airflow/config
     - ${AIRFLOW_PROJ_DIR:-.}/plugins:/opt/airflow/plugins
-    - ${AIRFLOW_PROJ_DIR:-.}/data_input:/opt/airflow/data_extraction
-    - ${AIRFLOW_PROJ_DIR:-.}/data_output:/opt/airflow/data_transformation
-    - ${AIRFLOW_PROJ_DIR:-.}/scripts:/opt/airflow/data_loading
-    - ${AIRFLOW_PROJ_DIR:-.}/scripts:/opt/airflow/etl_configs
-    - ${AIRFLOW_PROJ_DIR:-.}/scripts:/opt/airflow/csv_data
+    - ${AIRFLOW_PROJ_DIR:-.}/data_extraction:/opt/airflow/data_extraction
+    - ${AIRFLOW_PROJ_DIR:-.}/data_transformation:/opt/airflow/data_transformation
+    - ${AIRFLOW_PROJ_DIR:-.}/data_loading:/opt/airflow/data_loading
+    - ${AIRFLOW_PROJ_DIR:-.}/etl_configs:/opt/airflow/etl_configs
+    - ${AIRFLOW_PROJ_DIR:-.}/csv_data:/opt/airflow/csv_data
   user: "${AIRFLOW_UID:-50000}:0"
   depends_on:
     &airflow-common-depends-on
