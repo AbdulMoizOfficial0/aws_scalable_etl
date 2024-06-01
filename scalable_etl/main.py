@@ -3,7 +3,7 @@ from data_extraction.mysql_extractor import MySQLExtractor
 from data_transformation.csv_transformer import CSVTransformation
 from data_transformation.mysql_transformer import MySQLTransformer
 from data_loading.data_loading import MySQLLoader
-from config.config import ETLConfig
+from etl_configs.config import ETLConfig
 
 
 def main():
