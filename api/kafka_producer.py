@@ -41,3 +41,4 @@ if __name__ == "__main__":
 
     producer = KafkaProducer(bootstrap_servers='localhost:9092')
     produce_messages(producer, topic, api_url)
+

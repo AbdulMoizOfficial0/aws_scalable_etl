@@ -10,6 +10,7 @@ def load_config(config_path):
         return yaml.safe_load(file)
 
 
+
 def write_to_csv(data, csv_directory):
     if not os.path.exists(csv_directory):
         os.makedirs(csv_directory)
