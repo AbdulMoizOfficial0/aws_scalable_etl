@@ -17,44 +17,32 @@ def write_to_csv(data, csv_directory):
     file_path = os.path.join(csv_directory, 'api_data.csv')
     file_exists = os.path.isfile(file_path)
 
-    with open(file_path, mode='a', newline='') as file:
+    with open(file_path, mode='a', newline='', encoding='utf-8') as file:
         writer = csv.writer(file)
         if not file_exists:
-            writer.writerow(
-                ["gender", "title", "first", "last", "street_number", "street_name", "city", "state", "country",
-                 "postcode", "email", "username", "uuid"])
+            writer.writerow(["first", "last", "email", "phone", "dob"])
 
-        for item in data:
-            writer.writerow([
-                item['gender'],
-                item['name']['title'],
-                item['name']['first'],
-                item['name']['last'],
-                item['location']['street']['number'],
-                item['location']['street']['name'],
-                item['location']['city'],
-                item['location']['state'],
-                item['location']['country'],
-                item['location']['postcode'],
-                item['email'],
-                item['login']['username'],
-                item['login']['uuid']
-            ])
+        writer.writerow([
+            data.get('first', ''),
+            data.get('last', ''),
+            data.get('email', ''),
+            data.get('phone', ''),
+            data.get('dob', '')
+        ])
 
 
 def consume_messages(consumer, csv_directory):
-    buffer = []
     for message in consumer:
         try:
             raw_message = message.value.decode('utf-8')
             if raw_message:
                 data = json.loads(raw_message)
-                buffer.append(data)
-                if len(buffer) >= 10:
-                    write_to_csv(buffer, csv_directory)
-                    buffer.clear()
-            else:
-                print("Received empty message")
+                print("Received data:", data)  # Print received data for debugging
+
+                if isinstance(data, dict):
+                    write_to_csv(data, csv_directory)
+                else:
+                    print("Received data is not in the expected format")
         except json.JSONDecodeError as e:
             print(f"JSON decode error: {e} for message: {raw_message}")
 
@@ -65,7 +53,7 @@ if __name__ == "__main__":
 
     config = load_config(config_path)
     topic = 'testing'
-    csv_directory = config['api_data']
+    csv_directory = config['apiData']
 
     consumer = KafkaConsumer(
         topic,
