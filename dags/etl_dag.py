@@ -30,7 +30,7 @@ def extract_csv_data():
 
 def extract_mssql_data():
     mssql_extractor = MSSQLExtractor(config_file['mssql_connection_string'])
-    query = "SELECT * FROM ETC-USD"  # Define your query
+    query = "SELECT * FROM ETC-USD"
     return mssql_extractor.extract(query)
 
 
